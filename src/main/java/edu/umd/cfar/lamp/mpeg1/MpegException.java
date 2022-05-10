@@ -12,15 +12,11 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-public class MpegException extends Exception
-{
-	public MpegException()
-	{
-		super();
+public class MpegException extends Exception {
+	public MpegException() {
 	}
 
-	public MpegException(String message)
-	{
+	public MpegException(String message) {
 		super(message);
 	}
 }

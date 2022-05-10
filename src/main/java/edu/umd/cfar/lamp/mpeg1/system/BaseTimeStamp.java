@@ -12,28 +12,28 @@
 
 package edu.umd.cfar.lamp.mpeg1.system;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.columbia.ee.flavor.Bitstream;
+import edu.umd.cfar.lamp.mpeg1.Parsable;
+import edu.umd.cfar.lamp.mpeg1.ParsingException;
 
 /**
- *   Base class for all time stamp classes (they're all basically identical).
+ * Base class for all time stamp classes (they're all basically identical).
  */
-public class BaseTimeStamp implements Parsable
-{
+public class BaseTimeStamp implements Parsable {
 	protected int field1 = 0;
 	protected int field2 = 0;
 	protected int field3 = 0;
-	
-	public void parse(Bitstream bitstream) throws IOException
-	{
+
+	@Override
+	public void parse(Bitstream bitstream) throws IOException {
 		field1 = bitstream.getbits(3);
 		if (bitstream.getbits(1) != 1)
 			throw new ParsingException("Expected marker bit not found.");
-        field2 = bitstream.getbits(15);
+		field2 = bitstream.getbits(15);
 		if (bitstream.getbits(1) != 1)
 			throw new ParsingException("Expected marker bit not found.");
-        field3 = bitstream.getbits(15);
+		field3 = bitstream.getbits(15);
 	}
 }

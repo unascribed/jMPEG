@@ -12,42 +12,39 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.DataOutput;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.columbia.ee.flavor.Bitstream;
+import edu.umd.cfar.lamp.mpeg1.MpegException;
 
 /** Represents one Group of Pictures within a <code>VideoIndex</code>. */
-public class VideoIndexElement implements Comparable
-{
+public class VideoIndexElement implements Comparable {
 	private long startPosition;
-	private int  startPicture;
-	private int  numPictures;
-	private int  sequenceHeader;
+	private int startPicture;
+	private int numPictures;
+	private int sequenceHeader;
 
-	private VideoIndex           videoIndex;
-	private GroupOfPicturesIndex gopIndex    = null;
+	private VideoIndex videoIndex;
+	private GroupOfPicturesIndex gopIndex = null;
 
-
-	public VideoIndexElement(long startPosition, int startPicture, int numPictures, int sequenceHeader, VideoIndex videoIndex) throws IOException, MpegException
-	{
-		this.startPosition  = startPosition;
-		this.startPicture   = startPicture;
-		this.numPictures    = numPictures;
+	public VideoIndexElement(long startPosition, int startPicture, int numPictures, int sequenceHeader, VideoIndex videoIndex) throws IOException, MpegException {
+		this.startPosition = startPosition;
+		this.startPicture = startPicture;
+		this.numPictures = numPictures;
 		this.sequenceHeader = sequenceHeader;
-		this.videoIndex     = videoIndex;
+		this.videoIndex = videoIndex;
 	}
 
-	public void writeIndex(DataOutput out) throws IOException
-	{
+	public void writeIndex(DataOutput out) throws IOException {
 		out.writeLong(startPosition);
 		out.writeInt(numPictures);
 		out.writeInt(sequenceHeader);
 	}
-	
-	public int compareTo(Object o)
-	{
-		VideoIndexElement other = (VideoIndexElement)o;
+
+	@Override
+	public int compareTo(Object o) {
+		VideoIndexElement other = (VideoIndexElement) o;
 
 		if (getStartPosition() < other.getStartPosition())
 			return -1;
@@ -57,62 +54,52 @@ public class VideoIndexElement implements Comparable
 
 		return 0;
 	}
-	
-	public boolean containsPicture(int picture)
-	{
+
+	public boolean containsPicture(int picture) {
 		return (findPicture(picture) == 0);
 	}
-	
-	public int findPicture(int picture)
-	{
+
+	public int findPicture(int picture) {
 		if (picture < getStartPicture())
 			return -1;
 
 		if (picture > getLastPicture())
 			return 1;
-	
+
 		return 0;
 	}
 
-	public String toString()
-	{
+	@Override
+	public String toString() {
 		return "(Position: " + startPosition + ", First Picture: " + startPicture + ", Number of Pictures: " + numPictures + ")";
 	}
-	
-	public long getStartPosition()
-	{
+
+	public long getStartPosition() {
 		return startPosition;
 	}
 
-	public int getStartPicture()
-	{
+	public int getStartPicture() {
 		return startPicture;
 	}
 
-	public int getNumPictures()
-	{
+	public int getNumPictures() {
 		return numPictures;
 	}
 
-	public int getLastPicture()
-	{
+	public int getLastPicture() {
 		return startPicture + numPictures - 1;
 	}
 
-	public int getSequenceHeader()
-	{
+	public int getSequenceHeader() {
 		return sequenceHeader;
 	}
 
-	public boolean gopIndexed()
-	{
+	public boolean gopIndexed() {
 		return (gopIndex != null);
 	}
 
-	public void indexGop() throws IOException, MpegException
-	{
-		if (!gopIndexed())
-		{
+	public void indexGop() throws IOException, MpegException {
+		if (!gopIndexed()) {
 			gopIndex = new GroupOfPicturesIndex();
 			VideoSource videoSource = videoIndex.getVideoSource().copySource();
 			videoSource.seek(startPosition);
@@ -122,24 +109,23 @@ public class VideoIndexElement implements Comparable
 	}
 
 	/**
-	 * @param n  the frame
-	 * @return the byte position (in the video stream) of the 
-	 * (zero-based) <code>n</code>th picture (frame). 
+	 * @param n
+	 *            the frame
+	 * @return the byte position (in the video stream) of the
+	 *         (zero-based) <code>n</code>th picture (frame).
 	 * @throws IOException
 	 * @throws MpegException
 	 */
-	public long getPositionOfPicture(int n) throws IOException, MpegException
-	{
+	public long getPositionOfPicture(int n) throws IOException, MpegException {
 		if (!containsPicture(n))
 			throw new FrameNotFoundException("Frame " + n + " not in " + this);
 
 		indexGop();
-		
+
 		return gopIndex.getPositionOfPicture(n - getStartPicture()) + getStartPosition();
 	}
 
-	public int getLastIOrPPicture(int n) throws IOException, MpegException
-	{
+	public int getLastIOrPPicture(int n) throws IOException, MpegException {
 		int comparison = findPicture(n);
 		if (comparison < 0)
 			throw new FrameNotFoundException("Searching the wrong VideoIndexElement.");
@@ -150,8 +136,7 @@ public class VideoIndexElement implements Comparable
 			return gopIndex.getLastIOrPPicture(n - getStartPicture()) + getStartPicture();
 	}
 
-	public byte getPictureCodingTypeOfPicture(int n) throws IOException, MpegException
-	{
+	public byte getPictureCodingTypeOfPicture(int n) throws IOException, MpegException {
 		if (!containsPicture(n))
 			throw new FrameNotFoundException();
 

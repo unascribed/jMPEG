@@ -12,32 +12,27 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.columbia.ee.flavor.Bitstream;
+import edu.umd.cfar.lamp.mpeg1.MpegException;
 
-class IndexerState extends ParserState
-{
-	public void indexSequenceHeader(Bitstream bitstream, VideoIndex videoIndex) throws IOException, MpegException
-	{
+class IndexerState extends ParserState {
+	public void indexSequenceHeader(Bitstream bitstream, VideoIndex videoIndex) throws IOException, MpegException {
 		sh = new SequenceHeader();
 		sh.parse(bitstream);
 		videoIndex.addSequenceHeader(sh);
 	}
 
-	public void indexGroupOfPictures(Bitstream bitstream, VideoIndex videoIndex) throws IOException, MpegException
-	{
+	public void indexGroupOfPictures(Bitstream bitstream, VideoIndex videoIndex) throws IOException, MpegException {
 		GroupOfPictures.index(bitstream, this, videoIndex);
 	}
 
-	public void indexPicture(Bitstream bitstream, VideoIndex videoIndex) throws IOException
-	{
+	public void indexPicture(Bitstream bitstream, VideoIndex videoIndex) throws IOException {
 		picture.index(bitstream, videoIndex);
 	}
 
-	public void indexPicture(Bitstream bitstream, GroupOfPicturesIndex gopIndex) throws IOException
-	{
+	public void indexPicture(Bitstream bitstream, GroupOfPicturesIndex gopIndex) throws IOException {
 		picture.index(bitstream, gopIndex);
 	}
 }

@@ -12,62 +12,57 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
-import java.util.logging.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.util.logging.Logger;
 
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.umd.cfar.lamp.mpeg1.Mpeg1SystemStream;
+import edu.umd.cfar.lamp.mpeg1.MpegException;
 
-public class VideoSource extends InputStream
-{
+public class VideoSource extends InputStream {
 	public static final int DEFAULT_BUFFER_SIZE = 32 * 1024;
-	
+
 	private static Logger logger = Logger.getLogger("edu.umd.cfar.lamp.mpeg1.video");
-	
-	private File              file   = null;
-	private RandomAccessFile  rafile = null;
+
+	private File file = null;
+	private RandomAccessFile rafile = null;
 	private Mpeg1SystemStream stream = null;
 
 	private byte[] buffer;
-	private int    currentBufferPosition = 0;
-	private int    unreadBytesInBuffer   = 0;
+	private int currentBufferPosition = 0;
+	private int unreadBytesInBuffer = 0;
 
-	
-	public VideoSource(File file) throws IOException
-	{
+	public VideoSource(File file) throws IOException {
 		this(file, DEFAULT_BUFFER_SIZE);
 	}
 
-	public VideoSource(Mpeg1SystemStream stream, int stream_id) throws IOException, MpegException
-	{
+	public VideoSource(Mpeg1SystemStream stream, int stream_id) throws IOException, MpegException {
 		this(stream, stream_id, DEFAULT_BUFFER_SIZE);
 	}
 
-	public VideoSource(File file, int bufferSize) throws IOException
-	{
-		super();
+	public VideoSource(File file, int bufferSize) throws IOException {
 		this.file = file;
 		this.rafile = new RandomAccessFile(file, "r");
 		this.buffer = new byte[bufferSize];
 	}
 
-	public VideoSource(Mpeg1SystemStream stream, int stream_id, int bufferSize) throws IOException, MpegException
-	{
-		super();
+	public VideoSource(Mpeg1SystemStream stream, int stream_id, int bufferSize) throws IOException, MpegException {
 		this.stream = stream;
 		this.stream.setStream(stream_id);
 		this.buffer = new byte[bufferSize];
 	}
 
-	public int getStreamID()
-	{
+	public int getStreamID() {
 		if (isSystemStream())
 			return stream.getStreamID();
 		else
 			return 0;
 	}
-	
-	public VideoSource copySource() throws IOException, MpegException
-	{
+
+	public VideoSource copySource() throws IOException, MpegException {
 		if (isFile())
 			return new VideoSource(file, buffer.length);
 		if (isSystemStream())
@@ -78,54 +73,48 @@ public class VideoSource extends InputStream
 		return null;
 	}
 
-	public boolean isFile()
-	{
+	public boolean isFile() {
 		return (file != null);
 	}
 
-	public boolean isSystemStream()
-	{
+	public boolean isSystemStream() {
 		return (stream != null);
 	}
 
-	public void seek(long offset) throws IOException, MpegException
-	{
+	public void seek(long offset) throws IOException, MpegException {
 		flushBuffer();
-		
+
 		if (isFile())
 			rafile.seek(offset);
 		if (isSystemStream())
 			stream.seek(offset);
 	}
 
-	public void flushBuffer()
-	{
+	public void flushBuffer() {
 		unreadBytesInBuffer = 0;
 	}
 
 	// === InputStream ==========================================================================
-	public int available() throws IOException
-	{
+	@Override
+	public int available() throws IOException {
 		return unreadBytesInBuffer;
 	}
-	
-	public void close() throws IOException
-	{
+
+	@Override
+	public void close() throws IOException {
 		if (isFile())
 			rafile.close();
 
 		if (isSystemStream())
 			stream.close();
 	}
-	
-	public int read() throws IOException
-	{
-		if (unreadBytesInBuffer == 0)
-		{
+
+	@Override
+	public int read() throws IOException {
+		if (unreadBytesInBuffer == 0) {
 			int bytesRead = 0;
 
-			try
-			{
+			try {
 				if (isFile())
 					bytesRead = rafile.read(buffer);
 				else if (isSystemStream())
@@ -135,13 +124,11 @@ public class VideoSource extends InputStream
 
 				if (bytesRead == -1)
 					return -1;
-			}
-			catch (EOFException eofe)
-			{
+			} catch (EOFException eofe) {
 				return -1;
 			}
 
-			unreadBytesInBuffer   = bytesRead;
+			unreadBytesInBuffer = bytesRead;
 			currentBufferPosition = 0;
 		}
 

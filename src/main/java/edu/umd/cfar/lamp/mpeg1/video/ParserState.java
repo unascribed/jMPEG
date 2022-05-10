@@ -12,90 +12,74 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
+import edu.columbia.ee.flavor.Bitstream;
 
-class ParserState 
-{
-	protected SequenceHeader  sh             = new SequenceHeader();
-	protected GroupOfPictures gop            = new GroupOfPictures();
-	protected Picture         picture        = new Picture();
-	protected Slice           slice          = new Slice();
-	protected Macroblock      macroblock     = new Macroblock();
-	protected Block           block          = new Block();
+class ParserState {
+	protected SequenceHeader sh = new SequenceHeader();
+	protected GroupOfPictures gop = new GroupOfPictures();
+	protected Picture picture = new Picture();
+	protected Slice slice = new Slice();
+	protected Macroblock macroblock = new Macroblock();
+	protected Block block = new Block();
 
-	protected int             blockNum       = 0;
+	protected int blockNum = 0;
 
-
-	public void parseSequenceHeader(Bitstream bitstream) throws IOException
-	{
+	public void parseSequenceHeader(Bitstream bitstream) throws IOException {
 		sh.parse(bitstream);
 	}
-	
-	public void parseGroupOfPictures(Bitstream bitstream) throws IOException
-	{
+
+	public void parseGroupOfPictures(Bitstream bitstream) throws IOException {
 		gop.parse(bitstream, this);
 	}
 
-	public void parsePicture(Bitstream bitstream) throws IOException
-	{
+	public void parsePicture(Bitstream bitstream) throws IOException {
 		picture.parse(bitstream, this);
 	}
 
-	public void parseSlice(Bitstream bitstream) throws IOException
-	{
+	public void parseSlice(Bitstream bitstream) throws IOException {
 		slice.parse(bitstream, this);
 	}
 
-	public void parseMacroblock(Bitstream bitstream) throws IOException
-	{
+	public void parseMacroblock(Bitstream bitstream) throws IOException {
 		macroblock.parse(bitstream, this);
 	}
 
-	public void parseBlock(int blockNum, Bitstream bitstream) throws IOException
-	{
+	public void parseBlock(int blockNum, Bitstream bitstream) throws IOException {
 		this.blockNum = blockNum;
 		block.parse(bitstream, this);
 	}
 
-	public boolean getPatternCode(int i)
-	{
+	public boolean getPatternCode(int i) {
 		return macroblock.getPatternCode(i);
 	}
 
-	public boolean getMacroblockIntra()
-	{
+	public boolean getMacroblockIntra() {
 		return macroblock.getMacroblockIntra();
 	}
 
-	public int getBlockNumber()
-	{
+	public int getBlockNumber() {
 		return blockNum;
 	}
 
-	public int getPictureCodingType()
-	{
+	public int getPictureCodingType() {
 		return picture.getPictureCodingType();
 	}
 
-	public int getForwardFCode()
-	{
+	public int getForwardFCode() {
 		return picture.getForwardFCode();
 	}
 
-	public int getBackwardFCode()
-	{
+	public int getBackwardFCode() {
 		return picture.getBackwardFCode();
 	}
 
-	public void setSequenceHeader(SequenceHeader sh)
-	{
+	public void setSequenceHeader(SequenceHeader sh) {
 		this.sh = sh;
 	}
 
-	public SequenceHeader getSequenceHeader()
-	{
+	public SequenceHeader getSequenceHeader() {
 		return sh;
 	}
 }

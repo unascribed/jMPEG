@@ -12,40 +12,31 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-
-class DCTCoefficientValues
-{
-	private int run   = 0;
+class DCTCoefficientValues {
+	private int run = 0;
 	private int level = 0;
 
-	
-	public DCTCoefficientValues()
-	{
+	public DCTCoefficientValues() {
 	}
 
-	public DCTCoefficientValues(int run, int level)
-	{
+	public DCTCoefficientValues(int run, int level) {
 		setRun(run);
 		setLevel(level);
 	}
 
-	public void setRun(int run)
-	{
+	public void setRun(int run) {
 		this.run = run;
 	}
 
-	public void setLevel(int level)
-	{
+	public void setLevel(int level) {
 		this.level = level;
 	}
 
-	public int getRun()
-	{
+	public int getRun() {
 		return run;
 	}
 
-	public int getLevel()
-	{
+	public int getLevel() {
 		return level;
 	}
 }

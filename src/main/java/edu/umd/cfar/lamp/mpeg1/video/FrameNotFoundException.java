@@ -12,17 +12,13 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.umd.cfar.lamp.mpeg1.MpegException;
 
-public class FrameNotFoundException extends MpegException
-{
-	public FrameNotFoundException()
-	{
-		super();
+public class FrameNotFoundException extends MpegException {
+	public FrameNotFoundException() {
 	}
 
-	public FrameNotFoundException(String message)
-	{
+	public FrameNotFoundException(String message) {
 		super(message);
 	}
 }

@@ -12,15 +12,11 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-public class UnsupportedIndexVersionException extends IndexException
-{
-	public UnsupportedIndexVersionException()
-	{
-		super();
+public class UnsupportedIndexVersionException extends IndexException {
+	public UnsupportedIndexVersionException() {
 	}
 
-	public UnsupportedIndexVersionException(String message)
-	{
+	public UnsupportedIndexVersionException(String message) {
 		super(message);
 	}
 }

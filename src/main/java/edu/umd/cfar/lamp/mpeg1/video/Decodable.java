@@ -12,12 +12,11 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.columbia.ee.flavor.Bitstream;
+import edu.umd.cfar.lamp.mpeg1.MpegException;
 
-public interface Decodable extends StateParsable
-{
+public interface Decodable extends StateParsable {
 	public void decode(Bitstream bitstream, DecoderState decoderState) throws IOException, MpegException;
 }

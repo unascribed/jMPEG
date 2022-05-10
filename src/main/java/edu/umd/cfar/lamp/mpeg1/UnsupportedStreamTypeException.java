@@ -12,15 +12,11 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-public class UnsupportedStreamTypeException extends MpegException
-{
-	public UnsupportedStreamTypeException()
-	{
-		super();
+public class UnsupportedStreamTypeException extends MpegException {
+	public UnsupportedStreamTypeException() {
 	}
 
-	public UnsupportedStreamTypeException(String message)
-	{
+	public UnsupportedStreamTypeException(String message) {
 		super(message);
 	}
 }

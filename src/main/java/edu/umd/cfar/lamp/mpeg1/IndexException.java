@@ -12,15 +12,11 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-public class IndexException extends MpegException
-{
-	public IndexException()
-	{
-		super();
+public class IndexException extends MpegException {
+	public IndexException() {
 	}
 
-	public IndexException(String message)
-	{
+	public IndexException(String message) {
 		super(message);
 	}
 }

@@ -12,113 +12,108 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.Image;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import edu.umd.cfar.lamp.mpeg1.video.*;
+import edu.umd.cfar.lamp.mpeg1.video.PelAspectRatio;
+import edu.umd.cfar.lamp.mpeg1.video.SequenceHeader;
+import edu.umd.cfar.lamp.mpeg1.video.VideoDecoder;
+import edu.umd.cfar.lamp.mpeg1.video.VideoSource;
 
-public class Mpeg1VideoStream
-{
+public class Mpeg1VideoStream {
 	private VideoDecoder videoDecoder = null;
-	
-	public Mpeg1VideoStream(VideoSource videoSource) throws IOException, MpegException
-	{
+
+	public Mpeg1VideoStream(VideoSource videoSource) throws IOException, MpegException {
 		videoDecoder = new VideoDecoder(videoSource);
 	}
 
-	public int getStreamID()
-	{
+	public int getStreamID() {
 		return videoDecoder.getStreamID();
 	}
 
-	public void writeIndex(File file) throws IOException, MpegException
-	{
+	public void writeIndex(File file) throws IOException, MpegException {
 		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
 		writeIndex(bos);
 		bos.close();
 	}
 
-	public void readIndex(File file) throws IOException, MpegException
-	{
+	public void readIndex(File file) throws IOException, MpegException {
 		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
 		readIndex(bis);
 		bis.close();
 	}
 
-	public void writeIndex(OutputStream out) throws IOException, MpegException
-	{
+	public void writeIndex(OutputStream out) throws IOException, MpegException {
 		index();
 		videoDecoder.writeIndex(new DataOutputStream(out));
 	}
 
-	public void readIndex(InputStream in) throws IOException, MpegException
-	{
+	public void readIndex(InputStream in) throws IOException, MpegException {
 		videoDecoder.readIndex(new DataInputStream(in));
 	}
 
-	public void index() throws IOException, MpegException
-	{
+	public void index() throws IOException, MpegException {
 		videoDecoder.index();
 	}
 
-	public void seek(int frame) throws IOException, MpegException
-	{
+	public void seek(int frame) throws IOException, MpegException {
 		videoDecoder.seek(frame);
 	}
 
-	public int getFrameWidth() throws IOException, MpegException
-	{
+	public int getFrameWidth() throws IOException, MpegException {
 		return videoDecoder.getFrameWidth();
 	}
 
-	public int getFrameHeight() throws IOException, MpegException
-	{
+	public int getFrameHeight() throws IOException, MpegException {
 		return videoDecoder.getFrameHeight();
 	}
 
-	public int getBitRate() throws IOException, MpegException
-	{
+	public int getBitRate() throws IOException, MpegException {
 		return videoDecoder.getBitRate();
 	}
 
-	public boolean isVariableBitRate() throws IOException, MpegException
-	{
+	public boolean isVariableBitRate() throws IOException, MpegException {
 		return getBitRate() == SequenceHeader.VARIABLE_BITRATE;
 	}
 
-	public PelAspectRatio getPixelAspectRatio() throws IOException, MpegException
-	{
+	public PelAspectRatio getPixelAspectRatio() throws IOException, MpegException {
 		return videoDecoder.getPixelAspectRatio();
 	}
 
-	public float getFrameRate() throws IOException, MpegException
-	{
+	public float getFrameRate() throws IOException, MpegException {
 		return videoDecoder.getFrameRate();
 	}
 
-	public int getNumFrames() throws IOException, MpegException
-	{
+	public int getNumFrames() throws IOException, MpegException {
 		return videoDecoder.getNumFrames();
 	}
-	
+
 	// Returns the byte position of the current frame.
-	public long getPosition() throws IOException, MpegException
-	{
+	public long getPosition() throws IOException, MpegException {
 		return videoDecoder.getPosition();
 	}
 
 	// Returns the picture_coding_type of the current frame.
-	public int getPictureCodingType() throws IOException, MpegException
-	{
+	public int getPictureCodingType() throws IOException, MpegException {
 		return videoDecoder.getPictureCodingType();
 	}
-	
-	public Image getImage() throws IOException, MpegException
-	{
+
+	public Image getImage() throws IOException, MpegException {
 		return videoDecoder.getImage();
 	}
+
 	/**
 	 * Gets the video decoder for this stream.
+	 *
 	 * @return Returns the videoDecoder.
 	 */
 	public VideoDecoder getVideoDecoder() {

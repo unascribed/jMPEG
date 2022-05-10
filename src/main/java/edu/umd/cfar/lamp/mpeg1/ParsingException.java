@@ -12,17 +12,13 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-import java.io.*;
+import java.io.IOException;
 
-public class ParsingException extends IOException
-{
-	public ParsingException()
-	{
-		super();
+public class ParsingException extends IOException {
+	public ParsingException() {
 	}
 
-	public ParsingException(String message)
-	{
+	public ParsingException(String message) {
 		super(message);
 	}
 }

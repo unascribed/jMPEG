@@ -12,101 +12,86 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.columbia.ee.flavor.Bitstream;
+import edu.columbia.ee.flavor.FlIOException;
+import edu.umd.cfar.lamp.mpeg1.MpegException;
+import edu.umd.cfar.lamp.mpeg1.ParsingException;
 
-class GroupOfPictures implements StateParsable
-{
-	private TimeCode time_code   = new TimeCode();
-	private boolean  closed_gop  = false;
-	private boolean  broken_link = false;
+class GroupOfPictures implements StateParsable {
+	private TimeCode time_code = new TimeCode();
+	private boolean closed_gop = false;
+	private boolean broken_link = false;
 
-
-	public void parse(Bitstream bitstream, ParserState parserState) throws IOException
-	{
+	@Override
+	public void parse(Bitstream bitstream, ParserState parserState) throws IOException {
 		if (bitstream.getbits(32) != VideoStartCodes.GROUP_START_CODE)
 			throw new ParsingException("Expected group_start_code not found.");
 
 		time_code.parse(bitstream);
 
-		closed_gop  = (bitstream.getbits(1) == 1);
+		closed_gop = (bitstream.getbits(1) == 1);
 		broken_link = (bitstream.getbits(1) == 1);
 
 		NextStartCode.parse(bitstream);
 
-		if (bitstream.nextbits(32) == VideoStartCodes.EXTENSION_START_CODE)
-		{
+		if (bitstream.nextbits(32) == VideoStartCodes.EXTENSION_START_CODE) {
 			if (bitstream.getbits(32) != VideoStartCodes.EXTENSION_START_CODE)
 				throw new ParsingException("Expected extension_start_code not found.");
 
-			while (bitstream.nextbits(24) != 1)
-			{
+			while (bitstream.nextbits(24) != 1) {
 				int group_extension_data = bitstream.getbits(8);
 			}
 
 			NextStartCode.parse(bitstream);
 		}
 
-		if (bitstream.nextbits(32) == VideoStartCodes.USER_DATA_START_CODE)
-		{
+		if (bitstream.nextbits(32) == VideoStartCodes.USER_DATA_START_CODE) {
 			if (bitstream.getbits(32) != VideoStartCodes.USER_DATA_START_CODE)
 				throw new ParsingException("Expected user_data_start_code not found.");
 
-			while (bitstream.nextbits(24) != 1)
-			{
+			while (bitstream.nextbits(24) != 1) {
 				int user_data = bitstream.getbits(8);
 			}
 
 			NextStartCode.parse(bitstream);
 		}
 
-		do
-		{
+		do {
 			parserState.parsePicture(bitstream);
-		}
-		while (bitstream.nextbits(32) == VideoStartCodes.PICTURE_START_CODE);
+		} while (bitstream.nextbits(32) == VideoStartCodes.PICTURE_START_CODE);
 	}
 
-	public static void index(Bitstream bitstream, IndexerState indexerState, GroupOfPicturesIndex index) throws IOException
-	{
+	public static void index(Bitstream bitstream, IndexerState indexerState, GroupOfPicturesIndex index) throws IOException {
 		bitstream.skipbits(32 + 25 + 2);
 
 		NextStartCode.parse(bitstream);
 
 		int start_code = 0;
 		// skip until next PICTURE_START_CODE
-		do
-		{
+		do {
 			NextStartCode.parse(bitstream);
 			start_code = bitstream.nextbits(32);
 			if (start_code != VideoStartCodes.PICTURE_START_CODE)
 				bitstream.skipbits(32);
 		} while (start_code != VideoStartCodes.PICTURE_START_CODE);
 
-		try
-		{
-			do
-			{
+		try {
+			do {
 				indexerState.indexPicture(bitstream, index);
-			}
-			while (bitstream.nextbits(32) == VideoStartCodes.PICTURE_START_CODE);
-		}
-		catch (FlIOException e)
-		{
-			if (!e.getMessage().equals("End of Data"))
-			{
+			} while (bitstream.nextbits(32) == VideoStartCodes.PICTURE_START_CODE);
+		} catch (FlIOException e) {
+			if (!e.getMessage().equals("End of Data")) {
 				throw e;
 			}
 		}
 	}
-	
-	public static void index(Bitstream bitstream, IndexerState indexerState, VideoIndex index) throws IOException, MpegException
-	{
+
+	public static void index(Bitstream bitstream, IndexerState indexerState, VideoIndex index) throws IOException, MpegException {
 		long startPosition = bitstream.getpos() / 8;
-		int  numPictures   = 0;
-		
+		int numPictures = 0;
+
 		if (bitstream.getbits(32) != VideoStartCodes.GROUP_START_CODE)
 			throw new ParsingException("Expected group_start_code not found.");
 
@@ -114,27 +99,20 @@ class GroupOfPictures implements StateParsable
 
 		int start_code = 0;
 		// skip until next PICTURE_START_CODE
-		do
-		{
+		do {
 			NextStartCode.parse(bitstream);
 			start_code = bitstream.nextbits(32);
 			if (start_code != VideoStartCodes.PICTURE_START_CODE)
 				bitstream.skipbits(32);
 		} while (start_code != VideoStartCodes.PICTURE_START_CODE);
 
-		try
-		{
-			do
-			{
+		try {
+			do {
 				indexerState.indexPicture(bitstream, index);
 				numPictures++;
-			}
-			while (bitstream.nextbits(32) == VideoStartCodes.PICTURE_START_CODE);
-		}
-		catch (FlIOException e)
-		{
-			if (!e.getMessage().equals("End of Data"))
-			{
+			} while (bitstream.nextbits(32) == VideoStartCodes.PICTURE_START_CODE);
+		} catch (FlIOException e) {
+			if (!e.getMessage().equals("End of Data")) {
 				throw e;
 			}
 		}

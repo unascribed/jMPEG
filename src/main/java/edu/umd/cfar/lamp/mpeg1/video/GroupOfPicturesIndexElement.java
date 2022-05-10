@@ -13,68 +13,60 @@
 package edu.umd.cfar.lamp.mpeg1.video;
 
 /** Represents one picture (frame) within a <code>GroupOfPicturesIndex</code>. */
-public class GroupOfPicturesIndexElement implements Comparable
-{
+public class GroupOfPicturesIndexElement implements Comparable {
 	private long startPosition;
 	private long dataSize;
 	private byte type;
-	private int  displayOrder;
+	private int displayOrder;
 
-
-	public GroupOfPicturesIndexElement(long startPosition, long dataSize, byte type, int displayOrder)
-	{
+	public GroupOfPicturesIndexElement(long startPosition, long dataSize, byte type, int displayOrder) {
 		this.startPosition = startPosition;
-		this.dataSize      = dataSize;
-		this.type          = type;
-		this.displayOrder  = displayOrder;
+		this.dataSize = dataSize;
+		this.type = type;
+		this.displayOrder = displayOrder;
 	}
 
-	public long getStartPosition()
-	{
+	public long getStartPosition() {
 		return startPosition;
 	}
 
-	public long getDataSize()
-	{
+	public long getDataSize() {
 		return dataSize;
 	}
 
-	public byte getType()
-	{
+	public byte getType() {
 		return type;
 	}
 
-	public int getDisplayOrder()
-	{
+	public int getDisplayOrder() {
 		return displayOrder;
 	}
 
-	public char getTypeChar()
-	{
+	public char getTypeChar() {
 		return PictureCodingTypes.getChar(type);
 	}
 
-	public int compareTo(Object o)
-	{
+	@Override
+	public int compareTo(Object o) {
 		if (this.equals(o))
 			return 0;
 
-		if (getDisplayOrder() < ((GroupOfPicturesIndexElement)o).getDisplayOrder())
+		if (getDisplayOrder() < ((GroupOfPicturesIndexElement) o).getDisplayOrder())
 			return -1;
 
 		return 1;
 	}
 
-	public boolean equals(Object o)
-	{
+	@Override
+	public boolean equals(Object o) {
 		if (o instanceof GroupOfPicturesIndexElement)
-			return ((GroupOfPicturesIndexElement)o).getDisplayOrder() == getDisplayOrder();
+			return ((GroupOfPicturesIndexElement) o).getDisplayOrder() == getDisplayOrder();
 		else
 			return false;
 	}
 
-	public String toString()
-	{
+	@Override
+	public String toString() {
 		return "(startPosition: " + startPosition + ", " + "dataSize: " + dataSize + ", " + "type: " + getTypeChar() + ", " + "displayOrder: " + displayOrder + ")";
 
 	}

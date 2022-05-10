@@ -12,61 +12,58 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
-import edu.umd.cfar.lamp.mpeg1.*;
+import edu.columbia.ee.flavor.Bitstream;
+import edu.umd.cfar.lamp.mpeg1.Parsable;
+import edu.umd.cfar.lamp.mpeg1.ParsingException;
 
-class PictureRate implements Parsable
-{
+class PictureRate implements Parsable {
 	private float value = 0.0f;
-	
 
-	public void parse(Bitstream bitstream) throws IOException
-	{
-		switch (bitstream.nextbits(4))
-		{
-		case 0:
-			throw new ParsingException("Value 0 for PictureRate forbidden.");
-		case 1:
-			bitstream.skipbits(4);
-			value = 23.976f;
-			break;
-		case 2:
-			bitstream.skipbits(4);
-			value = 24f;
-			break;
-		case 3:
-			bitstream.skipbits(4);
-			value = 25f;
-			break;
-		case 4:
-			bitstream.skipbits(4);
-			value = 29.97f;
-			break;
-		case 5:
-			bitstream.skipbits(4);
-			value = 30f;
-			break;
-		case 6:
-			bitstream.skipbits(4);
-			value = 50f;
-			break;
-		case 7:
-			bitstream.skipbits(4);
-			value = 59.94f;
-			break;
-		case 8:
-			bitstream.skipbits(4);
-			value = 60f;
-			break;
-		default:
-			throw new ParsingException("Value " + bitstream.nextbits(4) + " for PictureRate reserved.");
+	@Override
+	public void parse(Bitstream bitstream) throws IOException {
+		switch (bitstream.nextbits(4)) {
+			case 0:
+				throw new ParsingException("Value 0 for PictureRate forbidden.");
+			case 1:
+				bitstream.skipbits(4);
+				value = 23.976f;
+				break;
+			case 2:
+				bitstream.skipbits(4);
+				value = 24f;
+				break;
+			case 3:
+				bitstream.skipbits(4);
+				value = 25f;
+				break;
+			case 4:
+				bitstream.skipbits(4);
+				value = 29.97f;
+				break;
+			case 5:
+				bitstream.skipbits(4);
+				value = 30f;
+				break;
+			case 6:
+				bitstream.skipbits(4);
+				value = 50f;
+				break;
+			case 7:
+				bitstream.skipbits(4);
+				value = 59.94f;
+				break;
+			case 8:
+				bitstream.skipbits(4);
+				value = 60f;
+				break;
+			default:
+				throw new ParsingException("Value " + bitstream.nextbits(4) + " for PictureRate reserved.");
 		}
 	}
 
-	public float getValue()
-	{
+	public float getValue() {
 		return value;
 	}
 }

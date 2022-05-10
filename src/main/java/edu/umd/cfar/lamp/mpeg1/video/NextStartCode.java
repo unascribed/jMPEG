@@ -12,17 +12,14 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
+import edu.columbia.ee.flavor.Bitstream;
 
-class NextStartCode
-{
-	public static void parse(Bitstream bitstream) throws IOException
-	{
+class NextStartCode {
+	public static void parse(Bitstream bitstream) throws IOException {
 		bitstream.align(8);
-		while (bitstream.nextbits(24) != 1)
-		{
+		while (bitstream.nextbits(24) != 1) {
 			bitstream.skipbits(8);
 		}
 	}

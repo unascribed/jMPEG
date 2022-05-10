@@ -12,19 +12,16 @@
 
 package edu.umd.cfar.lamp.mpeg1.system;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
+import edu.columbia.ee.flavor.Bitstream;
 
-public class IndexerState extends ParserState 
-{
-	public void indexPack(Bitstream bitstream, SystemIndex systemIndex) throws IOException
-	{
+public class IndexerState extends ParserState {
+	public void indexPack(Bitstream bitstream, SystemIndex systemIndex) throws IOException {
 		pack.index(bitstream, this, systemIndex);
 	}
 
-	public void indexPacket(Bitstream bitstream, SystemIndex systemIndex) throws IOException
-	{
+	public void indexPacket(Bitstream bitstream, SystemIndex systemIndex) throws IOException {
 		packet.index(bitstream, this, systemIndex);
 	}
 }

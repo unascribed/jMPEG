@@ -12,28 +12,24 @@
 
 package edu.umd.cfar.lamp.mpeg1.system;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
+import edu.columbia.ee.flavor.Bitstream;
 
-public class ParserState 
-{
+public class ParserState {
 	protected SystemHeader systemHeader = new SystemHeader();
-	protected Pack         pack         = new Pack();
-	protected Packet       packet       = new Packet();
+	protected Pack pack = new Pack();
+	protected Packet packet = new Packet();
 
-	public void parseSystemHeader(Bitstream bitstream) throws IOException
-	{
+	public void parseSystemHeader(Bitstream bitstream) throws IOException {
 		systemHeader.parse(bitstream);
 	}
-	
-	public void parsePack(Bitstream bitstream) throws IOException
-	{
+
+	public void parsePack(Bitstream bitstream) throws IOException {
 		pack.parse(bitstream, this);
 	}
 
-	public void parsePacket(Bitstream bitstream) throws IOException
-	{
+	public void parsePacket(Bitstream bitstream) throws IOException {
 		packet.parse(bitstream, this);
 	}
 }

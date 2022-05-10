@@ -12,11 +12,10 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-import java.io.*;
+import java.io.IOException;
 
-import edu.columbia.ee.flavor.*;
+import edu.columbia.ee.flavor.Bitstream;
 
-public interface Parsable
-{
+public interface Parsable {
 	public void parse(Bitstream bitstream) throws IOException;
 }
