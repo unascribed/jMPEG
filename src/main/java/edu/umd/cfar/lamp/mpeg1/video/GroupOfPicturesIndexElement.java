@@ -13,7 +13,7 @@
 package edu.umd.cfar.lamp.mpeg1.video;
 
 /** Represents one picture (frame) within a <code>GroupOfPicturesIndex</code>. */
-public class GroupOfPicturesIndexElement implements Comparable {
+public class GroupOfPicturesIndexElement implements Comparable<GroupOfPicturesIndexElement> {
 	private long startPosition;
 	private long dataSize;
 	private byte type;
@@ -47,11 +47,11 @@ public class GroupOfPicturesIndexElement implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object o) {
+	public int compareTo(GroupOfPicturesIndexElement o) {
 		if (this.equals(o))
 			return 0;
 
-		if (getDisplayOrder() < ((GroupOfPicturesIndexElement) o).getDisplayOrder())
+		if (getDisplayOrder() < o.getDisplayOrder())
 			return -1;
 
 		return 1;
@@ -63,6 +63,11 @@ public class GroupOfPicturesIndexElement implements Comparable {
 			return ((GroupOfPicturesIndexElement) o).getDisplayOrder() == getDisplayOrder();
 		else
 			return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 31 * getDisplayOrder();
 	}
 
 	@Override

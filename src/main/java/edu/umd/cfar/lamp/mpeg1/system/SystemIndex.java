@@ -16,11 +16,10 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import edu.umd.cfar.lamp.mpeg1.IndexException;
@@ -30,33 +29,29 @@ public class SystemIndex {
 	public static final int MAGIC_NUMBER = 0x11172101; // for ISO/IEC 11172-1 version 1
 
 	/** Contains a list of indices, one for each stream. Maps <code>stream_id</code>s to <code>Vector</code>s of <code>SystemIndexElement</code>s. */
-	private Hashtable streamList = null;
+	private final Map<Integer, List<SystemIndexElement>> streamList = new HashMap<>();
 
 	/** Logger for errors in the format and other problems while decoding. */
 	private static Logger logger = Logger.getLogger("edu.umd.cfar.lamp.mpeg1.system");
 
-	public SystemIndex() {
-		streamList = new Hashtable();
-	}
-
 	public void writeIndex(DataOutput out) throws IOException {
 		out.writeInt(MAGIC_NUMBER);
 
-		Vector videoStreamList = getVideoStreamList();
+		List<Integer> videoStreamList = getVideoStreamList();
 
 		int numStreams = videoStreamList.size();
 		out.writeInt(numStreams);
 
 		for (int i = 0; i < numStreams; i++) {
-			Integer streamID = (Integer) videoStreamList.get(i);
+			Integer streamID = videoStreamList.get(i);
 			out.writeByte(streamID.intValue());
 
-			Vector packetList = (Vector) streamList.get(streamID);
+			List<SystemIndexElement> packetList = streamList.get(streamID);
 			int numPackets = packetList.size();
 			out.writeInt(numPackets);
 
 			for (int j = 0; j < numPackets; j++) {
-				SystemIndexElement sie = (SystemIndexElement) packetList.get(j);
+				SystemIndexElement sie = packetList.get(j);
 				sie.writeIndex(out);
 			}
 		}
@@ -71,7 +66,7 @@ public class SystemIndex {
 
 		switch (version) {
 			case 0x01:
-				streamList = new Hashtable();
+				streamList.clear();
 
 				int numStreams = in.readInt();
 
@@ -98,11 +93,9 @@ public class SystemIndex {
 	public String toString() {
 		String result = new String();
 
-		Enumeration enumeration = streamList.keys();
-		while (enumeration.hasMoreElements()) {
-			Iterator iter = ((Vector) streamList.get(enumeration.nextElement())).iterator();
-			while (iter.hasNext()) {
-				result += iter.next().toString() + " ";
+		for (Map.Entry<Integer, List<SystemIndexElement>> en : streamList.entrySet()) {
+			for (SystemIndexElement sie : en.getValue()) {
+				result += sie + " ";
 			}
 			result += "\n";
 		}
@@ -110,16 +103,16 @@ public class SystemIndex {
 		return result;
 	}
 
-	/** @return a <code>Vector</code> of <code>Integer</code>s, corresponding to the list of <code>stream_id</code>s. */
-	public Vector getStreamList() {
-		return new Vector(streamList.keySet());
+	/** @return a <code>list</code> of <code>Integer</code>s, corresponding to the list of <code>stream_id</code>s. */
+	public List<Integer> getStreamList() {
+		return new ArrayList<>(streamList.keySet());
 	}
 
-	public Vector getVideoStreamList() {
-		Vector allStreamsList = getStreamList();
-		Vector result = new Vector();
+	public List<Integer> getVideoStreamList() {
+		List<Integer> allStreamsList = getStreamList();
+		List<Integer> result = new ArrayList<>();
 		for (int i = 0; i < allStreamsList.size(); i++) {
-			Integer element = (Integer) allStreamsList.elementAt(i);
+			Integer element = allStreamsList.get(i);
 			if (StreamIDs.isVideoStream(element.intValue())) {
 				result.add(element);
 			}
@@ -143,35 +136,36 @@ public class SystemIndex {
 	public void addPacket(int stream_id, long systemStreamBytePosition, int packetDataLength) {
 		Integer streamID = Integer.valueOf(stream_id);
 		if (!streamList.containsKey(streamID)) {
-			streamList.put(streamID, new Vector());
+			streamList.put(streamID, new ArrayList<SystemIndexElement>());
 		}
 
 		long elementaryStreamBytePosition;
-		try {
-			SystemIndexElement lastSystemIndexElement = ((SystemIndexElement) ((Vector) streamList.get(streamID)).lastElement());
+		List<SystemIndexElement> li = streamList.get(streamID);
+		if (!li.isEmpty()) {
+			SystemIndexElement lastSystemIndexElement = li.get(li.size()-1);
 			elementaryStreamBytePosition = lastSystemIndexElement.getElementaryStreamDataStartPosition() + lastSystemIndexElement.getPacketDataLength();
-		} catch (NoSuchElementException nsee) {
+		} else {
 			elementaryStreamBytePosition = 0;
 		}
-		((Vector) streamList.get(streamID)).add(new SystemIndexElement(systemStreamBytePosition, elementaryStreamBytePosition, packetDataLength));
+		streamList.get(streamID).add(new SystemIndexElement(systemStreamBytePosition, elementaryStreamBytePosition, packetDataLength));
 	}
 
 	/**
 	 * Gets the byte position in the System Stream of the given byte
 	 * position in the elementary stream with the given
 	 * <code>stream_id</code>.
-	 *
+	 * 
 	 * @param stream_id
 	 *            the stream
 	 * @param bytePosition
 	 *            the position into the stream
 	 * @return the position in the file
-	 * @throws StreamNotFoundException
+	 * @throws StreamNotFoundException if no stream exists with this ID
 	 */
 	public long getPosition(int stream_id, long bytePosition) throws StreamNotFoundException {
 		Integer streamID = Integer.valueOf(stream_id);
 
-		Vector streamIndex = (Vector) streamList.get(streamID);
+		List<SystemIndexElement> streamIndex = streamList.get(streamID);
 
 		if (streamIndex == null) {
 			throw new StreamNotFoundException("stream_id: " + stream_id);
@@ -182,7 +176,7 @@ public class SystemIndex {
 		int high = streamIndex.size() - 1;
 		while (low <= high) {
 			int mid = (low + high) / 2;
-			SystemIndexElement sie = (SystemIndexElement) streamIndex.elementAt(mid);
+			SystemIndexElement sie = streamIndex.get(mid);
 			int c = sie.findByte(bytePosition);
 			if (c < 0)
 				high = mid - 1;
@@ -200,7 +194,7 @@ public class SystemIndex {
 	public long getLastByteInPacket(int stream_id, long bytePosition) throws StreamNotFoundException {
 		Integer streamID = Integer.valueOf(stream_id);
 
-		Vector streamIndex = (Vector) streamList.get(streamID);
+		List<SystemIndexElement> streamIndex = streamList.get(streamID);
 
 		if (streamIndex == null) {
 			throw new StreamNotFoundException("stream_id: " + stream_id);
@@ -211,7 +205,7 @@ public class SystemIndex {
 		int high = streamIndex.size() - 1;
 		while (low <= high) {
 			int mid = (low + high) / 2;
-			SystemIndexElement sie = (SystemIndexElement) streamIndex.elementAt(mid);
+			SystemIndexElement sie = streamIndex.get(mid);
 			int c = sie.findByte(bytePosition);
 			if (c < 0)
 				high = mid - 1;

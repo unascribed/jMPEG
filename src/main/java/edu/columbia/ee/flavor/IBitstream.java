@@ -25,7 +25,7 @@ package edu.columbia.ee.flavor;
  * The definition of the Bitstream I/O interface,
  * this is defines the methods that the Flavor translator
  * expects from the underlying class that performs bitstream I/O.
- *
+ * 
  * @see edu.columbia.ee.flavor.FlIOException
  */
 public interface IBitstream {
@@ -45,7 +45,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next 'n' bits as <b>unsigned</b> value (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -56,7 +56,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next 'n' bits as <b>signed</b> value (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -67,7 +67,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes 'n' bits as <b>unsigned</b> value (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -78,7 +78,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes 'n' bits as <b>signed</b> value (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -89,7 +89,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next float value in next 32 bits (input only)
-	 *
+	 * 
 	 * @return The float value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -98,7 +98,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes next float value in next 32 bits (input only)
-	 *
+	 * 
 	 * @return The float value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -107,7 +107,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next double value in next 32 bits (output only)
-	 *
+	 * 
 	 * @return The double value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -116,7 +116,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes next double value in next 32 bits (input only)
-	 *
+	 * 
 	 * @return The double value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -125,7 +125,7 @@ public interface IBitstream {
 
 	/**
 	 * Puts 'n' bits (output only)
-	 *
+	 * 
 	 * @param bits
 	 *            The value to put
 	 * @param n
@@ -138,7 +138,7 @@ public interface IBitstream {
 
 	/**
 	 * Puts float value into next 32 bits (input only)
-	 *
+	 * 
 	 * @param f
 	 *            The float value to put
 	 * @return The value put into the bit stream
@@ -149,7 +149,7 @@ public interface IBitstream {
 
 	/**
 	 * Puts double value into next 32 bits (output only)
-	 *
+	 * 
 	 * @param d
 	 *            The double value to put
 	 * @return value put into the bit stream
@@ -166,7 +166,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next 'n' bits as <b>unsigned</b> value using the little-endian method (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -177,7 +177,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next 'n' bits as <b>signed</b> value using the little-endian method (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -188,7 +188,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes 'n' bits as <b>unsigned</b> value using the little-endian method (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -199,7 +199,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes 'n' bits as <b>signed</b> value using the little-endian method (input only)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to get
 	 * @return The value of next n bits
@@ -210,7 +210,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next float value in next 32 bits using the little-endian method (input only)
-	 *
+	 * 
 	 * @return The float value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -219,7 +219,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes next float value in next 32 bits using the little-endian method (input only)
-	 *
+	 * 
 	 * @return The float value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -228,7 +228,7 @@ public interface IBitstream {
 
 	/**
 	 * Gets next double value in next 32 bits using the little-endian method (output only)
-	 *
+	 * 
 	 * @return The double value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -237,7 +237,7 @@ public interface IBitstream {
 
 	/**
 	 * Probes next double value in next 32 bits using the little-endian method (input only)
-	 *
+	 * 
 	 * @return The double value
 	 * @exception FlIOException
 	 *                if an I/O error occurs
@@ -246,7 +246,7 @@ public interface IBitstream {
 
 	/**
 	 * Puts 'n' bits using the little-endian method (output only)
-	 *
+	 * 
 	 * @param bits
 	 *            The value to put
 	 * @param n
@@ -259,7 +259,7 @@ public interface IBitstream {
 
 	/**
 	 * Puts float value into next 32 bits using the little-endian method (input only)
-	 *
+	 * 
 	 * @param f
 	 *            The float value to put
 	 * @return The value put into the bit stream
@@ -270,7 +270,7 @@ public interface IBitstream {
 
 	/**
 	 * Puts double value into next 32 bits using the little-endian method (output only)
-	 *
+	 * 
 	 * @param d
 	 *            The double value to put
 	 * @return value put into the bit stream
@@ -283,7 +283,7 @@ public interface IBitstream {
 
 	/**
 	 * Skips next 'n' bits (both input/output)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to skip
 	 * @exception FlIOException
@@ -293,7 +293,7 @@ public interface IBitstream {
 
 	/**
 	 * Aligns the bitstream to 8 bit boundary (n must be a multiple of 8, both input/output)
-	 *
+	 * 
 	 * @param n
 	 *            The number of bits to align
 	 * @return The number of bits skipped
@@ -304,21 +304,21 @@ public interface IBitstream {
 
 	/**
 	 * Gets current position (both input/output)
-	 *
+	 * 
 	 * @return The current bit position
 	 */
 	int getpos();
 
 	/**
 	 * Test end-of-data
-	 *
+	 * 
 	 * @return True when bitsream reaches end-of-data, false otherwise
 	 */
 	boolean atend();
 
 	/**
 	 * Returns mode(BS_INPUT or BS_OUTPUT)
-	 *
+	 * 
 	 * @return BS_INPUT or BS_OUPUT
 	 */
 	public int getmode();

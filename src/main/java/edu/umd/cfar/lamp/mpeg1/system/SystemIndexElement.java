@@ -35,10 +35,9 @@ public class SystemIndexElement {
 	 * Determines whether or not the <code>SystemIndexElement</code>
 	 * contains the given byte (<code>bytePosition</code>) of the
 	 * <i>elementary</i> stream of this packet.
-	 *
+	 * 
 	 * @param bytePosition
 	 *            the byte position
-	 * @return
 	 */
 	public boolean containsByte(long bytePosition) {
 		return (bytePosition >= elementaryStreamDataStartPosition) && (bytePosition < (elementaryStreamDataStartPosition + packetDataLength));
@@ -46,7 +45,7 @@ public class SystemIndexElement {
 
 	/**
 	 * Checks to see that the position is contained within.
-	 *
+	 * 
 	 * @param bytePosition
 	 *            byte offset to look for
 	 * @return -1 if <code>bytePosition</code> < the position of this packet in the elementary stream,<br>

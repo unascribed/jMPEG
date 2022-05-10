@@ -15,11 +15,10 @@ package edu.umd.cfar.lamp.mpeg1.video;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Vector;
-
+import java.util.List;
 import edu.columbia.ee.flavor.Bitstream;
 import edu.umd.cfar.lamp.mpeg1.IndexException;
 import edu.umd.cfar.lamp.mpeg1.MpegException;
@@ -29,8 +28,8 @@ import edu.umd.cfar.lamp.mpeg1.UnsupportedIndexVersionException;
 public class VideoIndex {
 	public static int MAGIC_NUMBER = 0x11172201; // for ISO/IEC 11172-2 version 1
 
-	private Vector index = null;
-	private Vector sequenceHeaderIndex = new Vector();
+	private List<VideoIndexElement> index = null;
+	private List<SequenceHeader> sequenceHeaderIndex = new ArrayList<SequenceHeader>();
 	private SequenceHeader firstSequenceHeader = null;
 	private VideoDecoder videoDecoder = null;
 	private IndexerState indexerState = new IndexerState();
@@ -51,12 +50,12 @@ public class VideoIndex {
 		int numSequenceHeaders = sequenceHeaderIndex.size();
 		out.writeInt(numSequenceHeaders);
 		for (int i = 0; i < numSequenceHeaders; i++) {
-			((SequenceHeader) sequenceHeaderIndex.get(i)).writeIndex(out);
+			sequenceHeaderIndex.get(i).writeIndex(out);
 		}
 		int numGOPs = index.size();
 		out.writeInt(numGOPs);
 		for (int i = 0; i < numGOPs; i++) {
-			((VideoIndexElement) index.get(i)).writeIndex(out);
+			index.get(i).writeIndex(out);
 		}
 	}
 
@@ -69,7 +68,7 @@ public class VideoIndex {
 
 		switch (version) {
 			case 0x01:
-				index = new Vector();
+				index = new ArrayList<VideoIndexElement>();
 				int numSequenceHeaders = in.readInt();
 				for (int i = 0; i < numSequenceHeaders; i++) {
 					SequenceHeader sh = new SequenceHeader();
@@ -119,7 +118,7 @@ public class VideoIndex {
 
 	public void index() throws IOException, MpegException {
 		if (!indexed()) {
-			index = new Vector();
+			index = new ArrayList<>();
 			VideoSequence.index(new Bitstream(getVideoSource().copySource()), indexerState, this);
 		}
 	}
@@ -139,8 +138,8 @@ public class VideoIndex {
 	public SequenceHeader getSequenceHeader(int frame) throws IOException, MpegException {
 		index();
 		int gop = getGroupOfPicturesNumberForFrame(frame);
-		VideoIndexElement vie = (VideoIndexElement) index.get(gop);
-		return (SequenceHeader) sequenceHeaderIndex.get(vie.getSequenceHeader());
+		VideoIndexElement vie = index.get(gop);
+		return sequenceHeaderIndex.get(vie.getSequenceHeader());
 	}
 
 	public void addSequenceHeader(SequenceHeader sequenceHeader) throws IOException, MpegException {
@@ -149,10 +148,10 @@ public class VideoIndex {
 
 	public void addGroupOfPictures(long startPosition, int numPictures, int sequenceHeader) throws IOException, MpegException {
 		int startPicture;
-		try {
-			VideoIndexElement lastElement = (VideoIndexElement) index.lastElement();
+		if (!index.isEmpty()) {
+			VideoIndexElement lastElement = index.get(index.size() - 1);
 			startPicture = lastElement.getStartPicture() + lastElement.getNumPictures();
-		} catch (NoSuchElementException nsee) {
+		} else {
 			startPicture = 0;
 		}
 		index.add(new VideoIndexElement(startPosition, startPicture, numPictures, sequenceHeader, this));
@@ -205,12 +204,12 @@ public class VideoIndex {
 
 	/**
 	 * Gets the group of pictures for the given frame
-	 *
+	 * 
 	 * @param frame
 	 *            the frame
 	 * @return 0-based number of the Group Of Pictures containing
 	 *         the given (0-based) frame.
-	 * @throws FrameNotFoundException
+	 * @throws FrameNotFoundException if no frame exists with this index
 	 */
 	public int getGroupOfPicturesNumberForFrame(int frame) throws FrameNotFoundException {
 		// binary search
@@ -218,7 +217,7 @@ public class VideoIndex {
 		int high = index.size() - 1;
 		while (low <= high) {
 			int mid = (low + high) / 2;
-			int c = ((VideoIndexElement) index.elementAt(mid)).findPicture(frame);
+			int c = index.get(mid).findPicture(frame);
 			if (c < 0)
 				high = mid - 1;
 			else if (c > 0)
@@ -230,11 +229,11 @@ public class VideoIndex {
 	}
 
 	public long getStartPosition(int groupOfPicturesNumber) {
-		return ((VideoIndexElement) index.elementAt(groupOfPicturesNumber)).getStartPosition();
+		return index.get(groupOfPicturesNumber).getStartPosition();
 	}
 
 	public int getStartFrame(int groupOfPicturesNumber) {
-		return ((VideoIndexElement) index.elementAt(groupOfPicturesNumber)).getStartPicture();
+		return index.get(groupOfPicturesNumber).getStartPicture();
 	}
 
 	public int getNumFrames() {
@@ -244,19 +243,19 @@ public class VideoIndex {
 		if (index.size() == 0)
 			return 0;
 
-		VideoIndexElement lastElement = (VideoIndexElement) index.lastElement();
+		VideoIndexElement lastElement = index.get(index.size() - 1);
 		return lastElement.getLastPicture() + 1; // 0-based, so have to add 1
 	}
 
 	public long getPositionOfFrame(int n) throws IOException, MpegException {
 		int gopNumber = getGroupOfPicturesNumberForFrame(n);
-		VideoIndexElement vie = (VideoIndexElement) index.elementAt(gopNumber);
+		VideoIndexElement vie = index.get(gopNumber);
 		return vie.getPositionOfPicture(n);
 	}
 
 	public int getLastIOrPFrame(int n) throws IOException, MpegException {
 		int gopNumber = getGroupOfPicturesNumberForFrame(n);
-		VideoIndexElement vie = (VideoIndexElement) index.elementAt(gopNumber);
+		VideoIndexElement vie = index.get(gopNumber);
 
 		try {
 			return vie.getLastIOrPPicture(n);
@@ -264,21 +263,21 @@ public class VideoIndex {
 			if (gopNumber == 0)
 				throw new FrameNotFoundException();
 
-			vie = (VideoIndexElement) index.elementAt(gopNumber - 1);
+			vie = index.get(gopNumber - 1);
 			return vie.getLastIOrPPicture(n);
 		}
 	}
 
 	public byte getPictureCodingTypeOfFrame(int n) throws IOException, MpegException {
 		int gopNumber = getGroupOfPicturesNumberForFrame(n);
-		VideoIndexElement vie = (VideoIndexElement) index.elementAt(gopNumber);
+		VideoIndexElement vie = index.get(gopNumber);
 		return vie.getPictureCodingTypeOfPicture(n);
 	}
 
 	@Override
 	public String toString() {
 		String result = new String();
-		Iterator iter = index.iterator();
+		Iterator<VideoIndexElement> iter = index.iterator();
 		while (iter.hasNext()) {
 			result += iter.next().toString() + "\n";
 		}

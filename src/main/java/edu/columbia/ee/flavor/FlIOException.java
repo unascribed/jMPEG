@@ -104,7 +104,7 @@ public class FlIOException extends IOException {
 
 	/**
 	 * Creates FlIOException with description
-	 *
+	 * 
 	 * @param s
 	 *            error detail message
 	 */
@@ -114,7 +114,7 @@ public class FlIOException extends IOException {
 
 	/**
 	 * Creates FlIOException with exception condition
-	 *
+	 * 
 	 * @param error_code
 	 *            The error code representing the exception condition
 	 */
@@ -125,7 +125,7 @@ public class FlIOException extends IOException {
 
 	/**
 	 * Creates FlIOException with exception condition
-	 *
+	 * 
 	 * @param error_code
 	 *            The error code representing the exception condition
 	 * @param error_msg
@@ -139,7 +139,7 @@ public class FlIOException extends IOException {
 
 	/**
 	 * Converts exception to string
-	 *
+	 * 
 	 * @return Descriptive message about the error
 	 */
 	@Override

@@ -12,11 +12,11 @@
 package edu.umd.cfar.lamp.mpeg1.video;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import edu.columbia.ee.flavor.Bitstream;
 import edu.umd.cfar.lamp.mpeg1.Parsable;
 import edu.umd.cfar.lamp.mpeg1.ParsingException;
-import edu.umd.cfar.lamp.viper.geometry.*;
 
 /**
  * Parses and interprets the pixel aspect ratio of an MPEG-1 file. For more
@@ -25,24 +25,26 @@ import edu.umd.cfar.lamp.viper.geometry.*;
 public class PelAspectRatio implements Parsable {
 	private int value = 0;
 
-	public static final Rational[] RATIONAL_PEL_RATIOS = { null,
-			new Rational(1), new Rational(6735, 10000),
-			new Rational(7031, 10000), new Rational(7615, 10000),
-			new Rational(8055, 10000), new Rational(8437, 10000),
-			new Rational(8935, 10000), new Rational(54, 59),
-			new Rational(9815, 10000), new Rational(10255, 10000),
-			new Rational(10695, 10000), new Rational(11, 10),
-			new Rational(11575, 10000), new Rational(12015, 10000) };
-	public static final float[] PEL_RATIOS = { Float.NaN, 1f, 0.6735f, 0.7031f,
+	private static final int[][] EXACT_PEL_RATIOS = {
+			{ 0, 0 }, { 1, 1 }, { 6735, 10000 },
+			{ 7031, 10000 }, { 7615, 10000 },
+			{ 8055, 10000 }, { 8437, 10000 },
+			{ 8935, 10000 }, { 54, 59 },
+			{ 9815, 10000 }, { 10255, 10000 },
+			{ 10695, 10000 }, { 11, 10 },
+			{ 11575, 10000 }, { 12015, 10000 } };
+	private static final BigDecimal[] BIG_PEL_RATIOS = new BigDecimal[EXACT_PEL_RATIOS.length];
+	private static final float[] PEL_RATIOS = { Float.NaN, 1f, 0.6735f, 0.7031f,
 			0.7615f, 0.8055f, 0.8437f, 0.8935f, 0.9157f, 0.9815f, 1.0255f,
 			1.0695f, 1.095f, 1.1575f, 1.2015f };
+
+	static {
+		BIG_PEL_RATIOS[0] = BigDecimal.ZERO;
+	}
 
 	public PelAspectRatio() {
 	}
 
-	/**
-	 * @param i
-	 */
 	public PelAspectRatio(int i) {
 		try {
 			setValue(i);
@@ -83,13 +85,26 @@ public class PelAspectRatio implements Parsable {
 		return PEL_RATIOS[value];
 	}
 
-	public Rational getRationalValue() {
-		return RATIONAL_PEL_RATIOS[value];
+	public int getNumerator() {
+		return EXACT_PEL_RATIOS[value][0];
+	}
+
+	public int getDenominator() {
+		return EXACT_PEL_RATIOS[value][1];
+	}
+
+	public BigDecimal getBigDecimalValue() {
+		BigDecimal d = BIG_PEL_RATIOS[value];
+		if (d == null) {
+			d = new BigDecimal(getNumerator()).divide(new BigDecimal(getDenominator()));
+			BIG_PEL_RATIOS[value] = d;
+		}
+		return d;
 	}
 
 	/**
 	 * Gets the index of the pel aspect ratio.
-	 *
+	 * 
 	 * @return Returns the ratio index.
 	 */
 	public int getValue() {

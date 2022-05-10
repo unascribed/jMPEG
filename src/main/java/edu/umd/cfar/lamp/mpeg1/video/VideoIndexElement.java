@@ -19,7 +19,7 @@ import edu.columbia.ee.flavor.Bitstream;
 import edu.umd.cfar.lamp.mpeg1.MpegException;
 
 /** Represents one Group of Pictures within a <code>VideoIndex</code>. */
-public class VideoIndexElement implements Comparable {
+public class VideoIndexElement implements Comparable<VideoIndexElement> {
 	private long startPosition;
 	private int startPicture;
 	private int numPictures;
@@ -43,8 +43,8 @@ public class VideoIndexElement implements Comparable {
 	}
 
 	@Override
-	public int compareTo(Object o) {
-		VideoIndexElement other = (VideoIndexElement) o;
+	public int compareTo(VideoIndexElement o) {
+		VideoIndexElement other = o;
 
 		if (getStartPosition() < other.getStartPosition())
 			return -1;
@@ -113,8 +113,6 @@ public class VideoIndexElement implements Comparable {
 	 *            the frame
 	 * @return the byte position (in the video stream) of the
 	 *         (zero-based) <code>n</code>th picture (frame).
-	 * @throws IOException
-	 * @throws MpegException
 	 */
 	public long getPositionOfPicture(int n) throws IOException, MpegException {
 		if (!containsPicture(n))

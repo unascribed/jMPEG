@@ -88,10 +88,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Constructs input bitstream.
-	 *
-	 * @param input
 	 * @author Jonathan Shneier
-	 * @throws FlIOException
 	 */
 	public Bitstream(InputStream input) throws FlIOException {
 		this(input, BUF_LEN);
@@ -99,10 +96,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Constructs output bitstream.
-	 *
-	 * @param output
 	 * @author Jonathan Shneier
-	 * @throws FlIOException
 	 */
 	public Bitstream(OutputStream output) throws FlIOException {
 		this(output, BUF_LEN);
@@ -110,11 +104,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Constructs input bitstream with the given buffer length.
-	 *
-	 * @param input
-	 * @param _buf_len
 	 * @author Jonathan Shneier
-	 * @throws FlIOException
 	 */
 	public Bitstream(InputStream input, int _buf_len) throws FlIOException {
 		cur_bit = 0;
@@ -137,11 +127,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Constructs an output bitstream with the given buffer length.
-	 *
-	 * @param output
-	 * @param _buf_len
 	 * @author Jonathan Shneier
-	 * @throws FlIOException
 	 */
 	public Bitstream(OutputStream output, int _buf_len) throws FlIOException {
 		cur_bit = 0;
@@ -161,12 +147,9 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Constructs either an output or an input stream, depending on the type
-	 *
-	 * @param filename
-	 *            file name to open
-	 * @param _type
-	 *            I/O type( BS_INPUT or BS_OUTPUT )
-	 * @throws FlIOException
+	 * 
+	 * @param filename file name to open
+	 * @param _type I/O type( BS_INPUT or BS_OUTPUT )
 	 */
 	public Bitstream(String filename, int _type) throws FlIOException {
 		this(filename, _type, BUF_LEN);
@@ -175,14 +158,10 @@ public class Bitstream implements IBitstream {
 	/**
 	 * Constructs either an output or an input stream, depending
 	 * on the type, with the given buffer length.
-	 *
-	 * @param filename
-	 *            file name to open
-	 * @param _type
-	 *            I/O type( BS_INPUT or BS_OUTPUT )
-	 * @param _buf_len
-	 *            buffer size
-	 * @throws FlIOException
+	 * 
+	 * @param filename file name to open
+	 * @param _type I/O type( BS_INPUT or BS_OUTPUT )
+	 * @param _buf_len buffer size
 	 */
 	public Bitstream(String filename, int _type, int _buf_len) throws FlIOException {
 		cur_bit = 0;
@@ -215,20 +194,7 @@ public class Bitstream implements IBitstream {
 	}
 
 	/**
-	 * close opened files
-	 *
-	 * @see Object#finalize()
-	 */
-	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		close();
-	}
-
-	/**
 	 * close file
-	 *
-	 * @throws FlIOException
 	 */
 	public void close() throws FlIOException {
 		try {
@@ -252,7 +218,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Check eof-of-file flag
-	 *
+	 * 
 	 * @return <code>true</code> if at end of file
 	 */
 	@Override
@@ -262,7 +228,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Current bit position
-	 *
+	 * 
 	 * @return the count of bits so far
 	 */
 	@Override
@@ -276,7 +242,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Get next n bits
-	 *
+	 * 
 	 * @param n
 	 *            number of bits to be fetched
 	 * @return the value of the fetched bits
@@ -296,7 +262,7 @@ public class Bitstream implements IBitstream {
 	 * Java does not support unsigned type
 	 * Remains only for compatibility with C++ language
 	 * Blindly calls sgetbits
-	 *
+	 * 
 	 * @see #sgetbits(int n) throws FlIOException
 	 */
 	@Override
@@ -309,7 +275,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Peek next n bits
-	 *
+	 * 
 	 * @param n
 	 *            number of bits to peek
 	 * @return the value of the peeked bits
@@ -359,7 +325,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Peek next n bits - signed value
-	 *
+	 * 
 	 * @param n
 	 *            number of bits to peek
 	 * @return the signed value of the peeked bits
@@ -379,9 +345,8 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Get float value(32 bits) from the bistream
-	 *
+	 * 
 	 * @return float value
-	 * @exception FlIOException
 	 */
 	@Override
 	public float getfloat() throws FlIOException {
@@ -392,9 +357,8 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Peak float value(32 bits) from the bistream
-	 *
+	 * 
 	 * @return float value
-	 * @exception FlIOException
 	 */
 	@Override
 	public float nextfloat() throws FlIOException {
@@ -403,9 +367,8 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Get double value(64 bits) from bistream
-	 *
+	 * 
 	 * @return double value
-	 * @exception FlIOException
 	 */
 	@Override
 	public double getdouble() throws FlIOException {
@@ -416,9 +379,8 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Get next double value from bistream
-	 *
+	 * 
 	 * @return double value
-	 * @throws FlIOException
 	 */
 	@Override
 	public double nextdouble() throws FlIOException {
@@ -445,13 +407,12 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Put n bits
-	 *
+	 * 
 	 * @param y
 	 *            value to put
 	 * @param n
 	 *            number of bits to put ( <= 32 bits)
 	 * @return <code>y</code>
-	 * @exception FlIOException
 	 */
 	@Override
 	public int putbits(int y, int n) throws FlIOException {
@@ -504,11 +465,10 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Put float value(32 bits) into bistream
-	 *
+	 * 
 	 * @param f
 	 *            float value
 	 * @return float value
-	 * @exception FlIOException
 	 */
 	@Override
 	public float putfloat(float f) throws FlIOException {
@@ -518,7 +478,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Put a double value into bitstream
-	 *
+	 * 
 	 * @param d
 	 *            double variable
 	 * @return the double value
@@ -543,11 +503,10 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Gets bits in little order.
-	 *
+	 * 
 	 * @param n
 	 *            bits to get
 	 * @return value
-	 * @throws FlIOException
 	 */
 	@Override
 	public int little_getbits(int n) throws FlIOException {
@@ -693,10 +652,9 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Skip n bits
-	 *
+	 * 
 	 * @param n
 	 *            number of bits to skip
-	 * @exception FlIOException
 	 */
 	@Override
 	public void skipbits(int n) throws FlIOException {
@@ -718,11 +676,10 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Align bitstream
-	 *
+	 * 
 	 * @param n
 	 *            number of bits to align on
 	 * @return the number of skipped bits
-	 * @throws FlIOException
 	 */
 	@Override
 	public int align(int n) throws FlIOException {
@@ -748,8 +705,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Flush all content in the buffer
-	 *
-	 * @throws FlIOException
+	 * 
 	 */
 	public void flushbits() throws FlIOException {
 		flush_buf();
@@ -766,7 +722,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Return current bit position
-	 *
+	 * 
 	 * @return current bit position
 	 */
 	public int getCurrentBit() {
@@ -775,7 +731,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Fill out internal buffer from the file
-	 *
+	 * 
 	 * @exception FlIOException
 	 *                System I/O failed or End of File
 	 */
@@ -806,7 +762,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Flush the buffer excluding the left-over bits
-	 *
+	 * 
 	 * @exception FlIOException
 	 *                System I/O failed or End of File
 	 */
@@ -889,7 +845,7 @@ public class Bitstream implements IBitstream {
 
 	/**
 	 * Return mode(BS_INPUT or BS_OUTPUT)
-	 *
+	 * 
 	 * @return BS_INPUT or BS_OUPUT
 	 */
 	@Override

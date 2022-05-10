@@ -45,7 +45,7 @@ public abstract class VideoStartCodes {
 
 	/**
 	 * Determines if the given <code>code</code> is a Slice start code.
-	 *
+	 * 
 	 * @param code
 	 *            the code to check
 	 * @return <code>true</code> if the code is a slice start code

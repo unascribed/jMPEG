@@ -12,7 +12,7 @@
 
 package edu.umd.cfar.lamp.mpeg1;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -107,13 +107,17 @@ public class Mpeg1VideoStream {
 		return videoDecoder.getPictureCodingType();
 	}
 
-	public Image getImage() throws IOException, MpegException {
+	public BufferedImage getImage() throws IOException, MpegException {
 		return videoDecoder.getImage();
+	}
+
+	public int[] getRawPixels() throws IOException, MpegException {
+		return videoDecoder.getRawPixels();
 	}
 
 	/**
 	 * Gets the video decoder for this stream.
-	 *
+	 * 
 	 * @return Returns the videoDecoder.
 	 */
 	public VideoDecoder getVideoDecoder() {

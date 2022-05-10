@@ -92,7 +92,7 @@ class DecoderState extends ParserState {
 	 * Decode a picture.
 	 * Assumed the environment is correctly set up (right frames in right
 	 * buffers, etc)
-	 *
+	 * 
 	 * @param frame
 	 *            the frame to decode
 	 * @throws IOException
@@ -470,7 +470,6 @@ class DecoderState extends ParserState {
 		int original_pel_col = mb_column * 16;
 		int pel_row = 0;
 		int pel_col = 0;
-		int frameWidth = getFrameWidth();
 
 		for (int j = 0; j < 6; j++) {
 			pel_row = original_pel_row;

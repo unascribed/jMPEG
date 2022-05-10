@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.List;
 
 import edu.umd.cfar.lamp.mpeg1.system.StreamIDs;
 import edu.umd.cfar.lamp.mpeg1.system.StreamNotFoundException;
@@ -133,23 +134,19 @@ public class Mpeg1File {
 		return streamType == AUDIO;
 	}
 
-	public Vector getStreamList() throws IOException, MpegException {
+	public List<Integer> getStreamList() throws IOException, MpegException {
 		if (isSystemFile()) {
 			return systemStream.getStreamList();
 		} else {
-			Vector result = new Vector(1);
-			result.add(Integer.valueOf(0));
-			return result;
+			return Collections.singletonList(0);
 		}
 	}
 
-	public Vector getVideoStreamList() throws IOException, MpegException {
+	public List<Integer> getVideoStreamList() throws IOException, MpegException {
 		if (isSystemFile()) {
 			return systemStream.getVideoStreamList();
 		} else {
-			Vector result = new Vector(1);
-			result.add(Integer.valueOf(0));
-			return result;
+			return Collections.singletonList(0);
 		}
 	}
 
@@ -173,7 +170,7 @@ public class Mpeg1File {
 		} else {
 			return new Mpeg1VideoStream(
 					new VideoSource(systemStream.copyStream(),
-							((Integer) getVideoStreamList().get(0)).intValue()));
+							getVideoStreamList().get(0).intValue()));
 		}
 	}
 }

@@ -31,6 +31,7 @@ public class SystemHeader implements Parsable {
 	int video_bound = 0;
 
 	@Override
+	@SuppressWarnings("unused") // unused variables are illustrative
 	public void parse(Bitstream bitstream) throws IOException {
 		if (bitstream.getbits(32) != SystemStartCodes.SYSTEM_HEADER_START_CODE)
 			throw new ParsingException("Expected system_header_start_code not found.");

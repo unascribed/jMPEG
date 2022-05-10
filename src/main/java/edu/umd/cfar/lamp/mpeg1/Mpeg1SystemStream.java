@@ -24,10 +24,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
+import java.nio.Buffer;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Vector;
+import java.util.List;
 
 import javax.swing.ProgressMonitorInputStream;
 
@@ -38,7 +39,8 @@ import edu.umd.cfar.lamp.mpeg1.system.SystemIndex;
 import edu.umd.cfar.lamp.mpeg1.system.SystemStream;
 
 public class Mpeg1SystemStream extends InputStream {
-	private File file = null;
+	private final File file ;
+	private final FileChannel channel;
 	private ByteBuffer buffer = null;
 	private SystemIndex systemIndex = null;
 
@@ -47,9 +49,9 @@ public class Mpeg1SystemStream extends InputStream {
 
 	public Mpeg1SystemStream(File file) throws IOException {
 		this.file = file;
-		FileChannel rafile = new RandomAccessFile(file, "r").getChannel();
-		long fsize = rafile.size();
-		this.buffer = rafile.map(FileChannel.MapMode.READ_ONLY, 0, fsize);
+		this.channel = new RandomAccessFile(file, "r").getChannel();
+		long fsize = channel.size();
+		this.buffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, fsize);
 	}
 
 	public Mpeg1SystemStream(File file, SystemIndex systemIndex)
@@ -118,12 +120,12 @@ public class Mpeg1SystemStream extends InputStream {
 		return currentStreamID;
 	}
 
-	public Vector getStreamList() throws IOException {
+	public List<Integer> getStreamList() throws IOException {
 		index();
 		return systemIndex.getStreamList();
 	}
 
-	public Vector getVideoStreamList() throws IOException {
+	public List<Integer> getVideoStreamList() throws IOException {
 		index();
 		return systemIndex.getVideoStreamList();
 	}
@@ -223,9 +225,15 @@ public class Mpeg1SystemStream extends InputStream {
 		streamPointer += result;
 		return result;
 	}
+	
+	@Override
+	public void close() throws IOException {
+		super.close();
+		channel.close();
+	}
 
 	private void seekRafile(long pos) throws IOException {
-		this.buffer.position((int) pos);
+		((Buffer) this.buffer).position((int) pos);
 	}
 
 	private int readRafile() throws IOException {

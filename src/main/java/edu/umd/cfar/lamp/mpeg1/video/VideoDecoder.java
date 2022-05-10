@@ -12,9 +12,7 @@
 
 package edu.umd.cfar.lamp.mpeg1.video;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.MemoryImageSource;
+import java.awt.image.BufferedImage;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -143,9 +141,14 @@ public class VideoDecoder {
 		videoIndex.index();
 	}
 
-	public Image getImage() throws IOException, MpegException {
-		int pixelData[] = convertYCbCrToRGB(decoderState.getCurrentYCbCr());
-		return Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(getFrameWidth(), getFrameHeight(), pixelData, 0, getFrameWidth()));
+	public BufferedImage getImage() throws IOException, MpegException {
+		BufferedImage img = new BufferedImage(getFrameWidth(), getFrameHeight(), BufferedImage.TYPE_INT_RGB);
+		img.setRGB(0, 0, getFrameWidth(), getFrameHeight(), getRawPixels(), 0, getFrameWidth());
+		return img;
+	}
+
+	public int[] getRawPixels() throws IOException, MpegException {
+		return convertYCbCrToRGB(decoderState.getCurrentYCbCr());
 	}
 
 	private int[] convertYCbCrToRGB(int pixelData[]) {
@@ -158,7 +161,7 @@ public class VideoDecoder {
 
 	/**
 	 * Converts YCbCr pixel data into RGB pixel data.
-	 *
+	 * 
 	 * @param packedYCbCrValue
 	 *            YCbCr pixel value. First byte is discarded, second byte is Y, third byte is Cb, fourth byte is Cr.
 	 * @return rgb value
@@ -172,7 +175,7 @@ public class VideoDecoder {
 
 	/**
 	 * Converts YCbCr pixel data into RGB pixel data.
-	 *
+	 * 
 	 * @param Y
 	 *            value
 	 * @param Cb
@@ -198,7 +201,7 @@ public class VideoDecoder {
 
 	/**
 	 * Constrains color component values to the 0..255 range.
-	 *
+	 * 
 	 * @param componentValue
 	 *            the value to clamp
 	 * @return the clamped value
@@ -210,7 +213,7 @@ public class VideoDecoder {
 	/**
 	 * Packs three color components into one integer. Color
 	 * components should be <code>clamp()</code>ed.
-	 *
+	 * 
 	 * @param component1
 	 *            the first color channel value
 	 * @param component2
